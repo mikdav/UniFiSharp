@@ -8,16 +8,16 @@ namespace UniFiSharp.Orchestration.Collections
     /// <summary>
     /// Represents a collection of port forwarding rules for the UniFi Security Gateway on this network
     /// </summary>
-    public class PortForwardCollection : RemotedDataCollection<PortForward>, IMutableRemotedDataCollection<PortForward>
+    public class PortForwardCollection : RemotedDataCollection<PortForwardModel>, IMutableRemotedDataCollection<PortForwardModel>
     {
-        internal PortForwardCollection(UniFiApi api) : base(api) { }
+        internal PortForwardCollection(UniFiNetworkApi api) : base(api) { }
 
         /// <summary>
         /// Create a new port forwarding entry
         /// </summary>
         /// <param name="item">New port forwarding entry to create on UniFi controller</param>
         /// <returns></returns>
-        public async Task Add(PortForward item)
+        public async Task Add(PortForwardModel item)
         {
             await API.SitePortForwardsCreate(item.Name, item.Proto, item.Source, item.Destination, item.FromPort, item.DestinationPort);
             await Refresh();
@@ -41,7 +41,7 @@ namespace UniFiSharp.Orchestration.Collections
         /// </summary>
         /// <param name="id">Port Forward ID</param>
         /// <returns>Port forwarding entry or <c>NULL</c></returns>
-        public PortForward GetById(string id)
+        public PortForwardModel GetById(string id)
         {
             return CachedCollection.FirstOrDefault(g => g.PortForwardId.Equals(id));
         }
@@ -53,7 +53,7 @@ namespace UniFiSharp.Orchestration.Collections
         public override async Task Refresh()
         {
             CachedCollection = (await API.SitePortForwardsList())
-                .Select(p => PortForward.CreateFromJson(p)).ToList();
+                .Select(p => PortForwardModel.CreateFromJson(p)).ToList();
         }
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace UniFiSharp.Orchestration.Collections
         /// </summary>
         /// <param name="item">Port forwarding rule to remove</param>
         /// <returns><c>TRUE</c> if there was an item to remove, otherwise <c>FALSE</c></returns>
-        public async Task<bool> Remove(PortForward item)
+        public async Task<bool> Remove(PortForwardModel item)
         {
             if (!CachedCollection.Contains(item))
                 return false;

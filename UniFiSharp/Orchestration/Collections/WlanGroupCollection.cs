@@ -8,16 +8,16 @@ namespace UniFiSharp.Orchestration.Collections
     /// <summary>
     /// Represents a collection of WLAN groups for this UniFi network
     /// </summary>
-    public class WlanGroupCollection : RemotedDataCollection<WlanGroup>, IMutableRemotedDataCollection<WlanGroup>
+    public class WlanGroupCollection : RemotedDataCollection<WlanGroupModel>, IMutableRemotedDataCollection<WlanGroupModel>
     {
-        internal WlanGroupCollection(UniFiApi api) : base(api) { }
+        internal WlanGroupCollection(UniFiNetworkApi api) : base(api) { }
 
         /// <summary>
         /// Create a new WLAN group
         /// </summary>
         /// <param name="item">New WLAN group to create on UniFi controller</param>
         /// <returns></returns>
-        public async Task Add(WlanGroup item)
+        public async Task Add(WlanGroupModel item)
         {
             await API.SiteWlanGroupsCreate(item.Name, item.RoamRadio, item.RoamChannelNA, item.RoamChannelNG, item.PmfMode != "disabled");
             await Refresh();
@@ -41,7 +41,7 @@ namespace UniFiSharp.Orchestration.Collections
         /// </summary>
         /// <param name="id">WLAN Group ID</param>
         /// <returns>WLAN group or <c>NULL</c></returns>
-        public WlanGroup GetById(string id)
+        public WlanGroupModel GetById(string id)
         {
             return CachedCollection.FirstOrDefault(g => g.WlanGroupId.Equals(id));
         }
@@ -53,7 +53,7 @@ namespace UniFiSharp.Orchestration.Collections
         public override async Task Refresh()
         {
             CachedCollection = (await API.SiteWlanGroupsList())
-                .Select(c => WlanGroup.CreateFromJson(c)).ToList();
+                .Select(c => WlanGroupModel.CreateFromJson(c)).ToList();
         }
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace UniFiSharp.Orchestration.Collections
         /// </summary>
         /// <param name="item">WLAN group to remove</param>
         /// <returns><c>TRUE</c> if there was an item to remove, otherwise <c>FALSE</c></returns>
-        public async Task<bool> Remove(WlanGroup item)
+        public async Task<bool> Remove(WlanGroupModel item)
         {
             if (!CachedCollection.Contains(item))
                 return false;

@@ -10,7 +10,7 @@ namespace UniFiSharp.Orchestration.Collections
     /// </summary>
     public class ClientNetworkedDeviceCollection : RemotedDataCollection<IClientNetworkedDevice>
     {
-        internal ClientNetworkedDeviceCollection(UniFiApi api) : base(api) { }
+        internal ClientNetworkedDeviceCollection(UniFiNetworkApi api) : base(api) { }
 
         /// <summary>
         /// Retrieve a client device by its MAC address

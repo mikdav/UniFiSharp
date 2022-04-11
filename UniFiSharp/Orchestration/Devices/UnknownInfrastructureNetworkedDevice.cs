@@ -4,8 +4,8 @@ namespace UniFiSharp.Orchestration.Devices
 {
     public class UnknownInfrastructureNetworkedDevice : IInfrastructureNetworkedDevice
     {
-        public JsonNetworkDevice Details => Json;
+        public NetworkDevice Details => Json;
 
-        public UnknownInfrastructureNetworkedDevice(UniFiApi api, JsonNetworkDevice json) : base(api, json) { }
+        public UnknownInfrastructureNetworkedDevice(UniFiNetworkApi api, NetworkDevice json) : base(api, json) { }
     }
 }

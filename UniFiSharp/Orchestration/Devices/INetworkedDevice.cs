@@ -5,9 +5,9 @@
         public abstract string Id { get; }
         public abstract string Name { get; }
 
-        protected UniFiApi API { get; set; }
+        protected UniFiNetworkApi API { get; set; }
 
-        public INetworkedDevice(UniFiApi api)
+        public INetworkedDevice(UniFiNetworkApi api)
         {
             API = api;
         }

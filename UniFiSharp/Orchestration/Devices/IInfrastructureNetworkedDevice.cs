@@ -106,9 +106,9 @@ namespace UniFiSharp.Orchestration.Devices
         public bool? HasSpeaker => Json.has_speaker;
         public int Volume => Json.volume;
 
-        protected JsonNetworkDevice Json { get; private set; }
+        protected NetworkDevice Json { get; private set; }
 
-        protected IInfrastructureNetworkedDevice(UniFiApi api, JsonNetworkDevice json) : base(api)
+        protected IInfrastructureNetworkedDevice(UniFiNetworkApi api, NetworkDevice json) : base(api)
         {
             Json = json;
             Clients = new List<IClientNetworkedDevice>();
@@ -117,9 +117,9 @@ namespace UniFiSharp.Orchestration.Devices
 
         public async Task Locate(int durationOfLocateMs = 5000)
         {
-            await API.NetworkDeviceLocate(MacAddress, true)
+            await API.DeviceLocate(MacAddress, true)
                 .ContinueWith(t1 => Task.Delay(durationOfLocateMs))
-                .ContinueWith(t2 => API.NetworkDeviceLocate(MacAddress, false));
+                .ContinueWith(t2 => API.DeviceLocate(MacAddress, false));
         }
 
         public async Task SetName(string newName)
@@ -129,15 +129,15 @@ namespace UniFiSharp.Orchestration.Devices
 
         public async Task Adopt()
         {
-            await API.NetworkDeviceAdopt(MacAddress);
+            await API.DeviceAdopt(MacAddress);
         }
 
         public async Task Forget()
         {
-            await API.NetworkDeviceForget(MacAddress);
+            await API.DeviceForget(MacAddress);
         }
 
-        public static IInfrastructureNetworkedDevice CreateFromJson(UniFiApi api, JsonNetworkDevice device)
+        public static IInfrastructureNetworkedDevice CreateFromJson(UniFiNetworkApi api, NetworkDevice device)
         {
             switch (device.type)
             {
@@ -173,9 +173,9 @@ namespace UniFiSharp.Orchestration.Devices
             public int? UplinkRemotePort => Json.uplink_remote_port;
             public TimeSpan Uptime => TimeSpan.FromSeconds(Json.uptime);
 
-            private JsonNetworkDevice.JsonLink Json { get; set; }
+            private NetworkDevice.Link Json { get; set; }
 
-            public DeviceLink(JsonNetworkDevice.JsonLink json)
+            public DeviceLink(NetworkDevice.Link json)
             {
                 Json = json;
             }

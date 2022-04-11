@@ -47,6 +47,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="RestSharp">
+      <HintPath>..\..\..\Users\mtitze\.nuget\packages\restsharp\106.12.0\lib\netstandard2.0\RestSharp.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="UniFiSharpLogo.png">
       <Pack>True</Pack>
     </None>

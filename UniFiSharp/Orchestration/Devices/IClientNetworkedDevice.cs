@@ -27,9 +27,9 @@ namespace UniFiSharp.Orchestration.Devices
         public double ActivityKbps => (Json.bytes_r * 8) / 1024.0d;
         public TimeSpan Uptime => TimeSpan.FromSeconds(Json.uptime);
 
-        protected JsonClient Json { get; private set; }
+        protected Client Json { get; private set; }
 
-        protected IClientNetworkedDevice(UniFiApi api, JsonClient json) : base(api)
+        protected IClientNetworkedDevice(UniFiNetworkApi api, Client json) : base(api)
         {
             Json = json;
         }
@@ -39,7 +39,7 @@ namespace UniFiSharp.Orchestration.Devices
             await API.ClientForceReconnect(MacAddress);
         }
 
-        public static IClientNetworkedDevice CreateFromJson(UniFiApi api, JsonClient client)
+        public static IClientNetworkedDevice CreateFromJson(UniFiNetworkApi api, Client client)
         {
             if (client.is_wired)
                 return new WiredClientNetworkedDevice(api, client);

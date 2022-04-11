@@ -14,6 +14,6 @@ namespace UniFiSharp.Orchestration.Devices
         public int Rssi => Json.rssi;
         public int Signal => Json.signal;
 
-        public WirelessClientNetworkedDevice(UniFiApi api, JsonClient json) : base(api, json) { }
+        public WirelessClientNetworkedDevice(UniFiNetworkApi api, Client json) : base(api, json) { }
     }
 }

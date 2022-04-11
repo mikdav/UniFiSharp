@@ -8,6 +8,6 @@ namespace UniFiSharp.Orchestration.Devices
         public int SwitchPort => Json.sw_port;
         public int SwitchDepth => Json.sw_depth;
 
-        public WiredClientNetworkedDevice(UniFiApi api, JsonClient json) : base(api, json) { }
+        public WiredClientNetworkedDevice(UniFiNetworkApi api, Client json) : base(api, json) { }
     }
 }

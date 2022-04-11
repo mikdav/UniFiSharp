@@ -7,7 +7,7 @@ namespace UniFiSharp.Orchestration.Devices
     {
         public List<RouterNetworkTableEntry> NetworkTable { get; }
 
-        public RouterInfrastructureNetworkedDevice(UniFiApi api, JsonNetworkDevice json) : base(api, json) { }
+        public RouterInfrastructureNetworkedDevice(UniFiNetworkApi api, NetworkDevice json) : base(api, json) { }
 
         public class RouterNetworkTableEntry
         {
@@ -30,9 +30,9 @@ namespace UniFiSharp.Orchestration.Devices
             public int? Vlan => Json.vlan;
             public bool VlanEnabled => Json.vlan_enabled;
 
-            private JsonNetworkDevice.JsonNetworkTable Json { get; set; }
+            private NetworkDevice.NetworkTable Json { get; set; }
 
-            public RouterNetworkTableEntry(JsonNetworkDevice.JsonNetworkTable json)
+            public RouterNetworkTableEntry(NetworkDevice.NetworkTable json)
             {
                 Json = json;
             }

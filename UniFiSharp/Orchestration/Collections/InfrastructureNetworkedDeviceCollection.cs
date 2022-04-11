@@ -10,7 +10,7 @@ namespace UniFiSharp.Orchestration.Collections
     /// </summary>
     public class InfrastructureNetworkedDeviceCollection : RemotedDataCollection<IInfrastructureNetworkedDevice>
     {
-        internal InfrastructureNetworkedDeviceCollection(UniFiApi api) : base(api) { }
+        internal InfrastructureNetworkedDeviceCollection(UniFiNetworkApi api) : base(api) { }
 
         /// <summary>
         /// Retrieve an infrastructure device by its MAC address
@@ -38,7 +38,7 @@ namespace UniFiSharp.Orchestration.Collections
         /// <returns></returns>
         public override async Task Refresh()
         {
-            CachedCollection = (await API.NetworkDeviceList())
+            CachedCollection = (await API.DeviceList())
                 .Select(d => IInfrastructureNetworkedDevice.CreateFromJson(API, d)).ToList();
         }
     }

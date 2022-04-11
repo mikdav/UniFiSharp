@@ -38,7 +38,7 @@ namespace UniFiSharp.Orchestration.Devices
         /// </summary>
         public List<AccessPointEssid> Essids => Json.vap_table.Select(v => new AccessPointEssid(v)).ToList();
         
-        internal AccessPointInfrastructureNetworkedDevice(UniFiApi api, JsonNetworkDevice json) : base(api, json) { }
+        internal AccessPointInfrastructureNetworkedDevice(UniFiNetworkApi api, NetworkDevice json) : base(api, json) { }
 
         /// <summary>
         /// Start an RF spectrum scan from this access point. It will be unavailable for approximately 15 minutes while the scan is running.
@@ -46,14 +46,14 @@ namespace UniFiSharp.Orchestration.Devices
         /// <param name="msBetweenResultChecks">Time (in ms) to wait between checking for results</param>
         /// <remarks>The task returned will live until the result is returned to the caller</remarks>
         /// <returns>Long-living task which will return results of the RF spectrum scan once complete</returns>
-        public Task<Json.JsonSpectrumScan> RunRfScan(int msBetweenResultChecks = 10000)
+        public Task<Json.SpectrumScan> RunRfScan(int msBetweenResultChecks = 10000)
         {
             return Task.Run(async () =>
             {
-                await API.NetworkDeviceRfScan(MacAddress);
+                await API.DeviceRfScan(MacAddress);
                 while (true)
                 {
-                    var result = await API.NetworkDeviceRfScanStatus(MacAddress);
+                    var result = await API.DeviceRfScanStatus(MacAddress);
                     if (result != null && !result.spectrum_scanning)
                         return result;
                     await Task.Delay(msBetweenResultChecks);
@@ -94,9 +94,9 @@ namespace UniFiSharp.Orchestration.Devices
 
             public string UsageMode => Json.usage;
 
-            private JsonNetworkDevice.JsonVapTable Json { get; set; }
+            private NetworkDevice.VapTable Json { get; set; }
 
-            public AccessPointEssid(JsonNetworkDevice.JsonVapTable json)
+            public AccessPointEssid(NetworkDevice.VapTable json)
             {
                 Json = json;
             }
@@ -120,9 +120,9 @@ namespace UniFiSharp.Orchestration.Devices
             public string RadioType => Json.radio;
             public string TxPowerMode => Json.tx_power_mode;
 
-            private JsonNetworkDevice.JsonRadioTable Json { get; set; }
+            private NetworkDevice.RadioTable Json { get; set; }
 
-            public AccessPointRadio(JsonNetworkDevice.JsonRadioTable json)
+            public AccessPointRadio(NetworkDevice.RadioTable json)
             {
                 Json = json;
             }

@@ -39,13 +39,13 @@ namespace UniFiSharp.Orchestration
         /// </summary>
         public INetworkedDevice TopologicalRoot { get; private set; }
 
-        private UniFiApi API { get; set; }
+        private UniFiNetworkApi API { get; set; }
 
         /// <summary>
         /// Wrapper around the UniFi API that provides an object tree view of the UniFi managed network
         /// </summary>
         /// <param name="api">UniFi API</param>
-        public UniFiOrchestrator(UniFiApi api)
+        public UniFiOrchestrator(UniFiNetworkApi api)
         {
             API = api;
 

@@ -49,12 +49,12 @@ namespace UniFiSharp
             await UniFiRequest(Method.GET, url);
         }
 
-        public async Task<T> UniFiGet<T>(string url) where T : new()
+        public async Task<T> UniFiGet<T>(string url)
         {
             return await UniFiRequest<T>(Method.GET, url);
         }
 
-        public async Task<IList<T>> UniFiGetMany<T>(string url) where T : new()
+        public async Task<IList<T>> UniFiGetMany<T>(string url)
         {
             return await UniFiRequestMany<T>(Method.GET, url);
         }
@@ -64,12 +64,12 @@ namespace UniFiSharp
             await UniFiRequest(Method.POST, url, jsonBody);
         }
 
-        public async Task<T> UniFiPost<T>(string url, object jsonBody) where T : new()
+        public async Task<T> UniFiPost<T>(string url, object jsonBody)
         {
             return await UniFiRequest<T>(Method.POST, url, jsonBody);
         }
 
-        public async Task<IList<T>> UniFiPostMany<T>(string url, object jsonBody) where T : new()
+        public async Task<IList<T>> UniFiPostMany<T>(string url, object jsonBody)
         {
             return await UniFiRequestMany<T>(Method.POST, url, jsonBody);
         }
@@ -79,12 +79,12 @@ namespace UniFiSharp
             await UniFiRequest(Method.PUT, url, jsonBody);
         }
 
-        public async Task<T> UniFiPut<T>(string url, object jsonBody) where T : new()
+        public async Task<T> UniFiPut<T>(string url, object jsonBody)
         {
             return await UniFiRequest<T>(Method.PUT, url, jsonBody);
         }
 
-        public async Task<IList<T>> UniFiPutMany<T>(string url, object jsonBody) where T : new()
+        public async Task<IList<T>> UniFiPutMany<T>(string url, object jsonBody)
         {
             return await UniFiRequestMany<T>(Method.PUT, url, jsonBody);
         }
@@ -107,37 +107,33 @@ namespace UniFiSharp
             await ExecuteRequest<object>(request);
         }
 
-        private async Task<T> UniFiRequest<T>(Method method, string url, object jsonBody = null) where T : new()
+        private async Task<T> UniFiRequest<T>(Method method, string url, object jsonBody = null)
         {
             var request = new RestRequest(url, method, DataFormat.Json);
             if ((method == Method.POST || method == Method.PUT) && jsonBody != null)
                 request.AddJsonBody(jsonBody);
 
             var envelope = await ExecuteRequest<T>(request);
-            if (envelope.Data != null && envelope.Data.Length > 0)
-            {
-                return envelope.Data[0];
-            }
 
-            if (envelope.Metadata.ResultCode.Equals("error", StringComparison.OrdinalIgnoreCase))
+            if (envelope.Metadata != null && envelope.Metadata.ResultCode.Equals("error", StringComparison.OrdinalIgnoreCase))
             {
                 throw new UniFiApiException($"UniFi API returned an error: {envelope.Metadata.Message}");
             }
 
-            return default;
+            return envelope.Data;
         }
 
         private async Task<IList<T>> UniFiRequestMany<T>(Method method, string url, object jsonBody = null)
-            where T : new()
+           
         {
             var request = new RestRequest(url, method, DataFormat.Json);
             if ((method == Method.POST || method == Method.PUT) && jsonBody != null)
                 request.AddJsonBody(jsonBody);
-            var envelope = await ExecuteRequest<T>(request);
+            var envelope = await ExecuteRequest<T[]>(request);
             return (envelope.Data == null) ? new List<T>() : new List<T>(envelope.Data);
         }
 
-        public async Task<JsonLoginResult> Authenticate()
+        public async Task<LoginResult> Authenticate()
         {
             if (_useModernApi)
             {
@@ -152,7 +148,7 @@ namespace UniFiSharp
 
                 request.JsonSerializer = NewtonsoftJsonSerializer.Default;
 
-                var response = await ExecuteAsync<JsonLoginResult>(request);
+                var response = await ExecuteAsync<LoginResult>(request);
                 _csrf_token = response.Headers.Where(x => x.Name == "X-CSRF-Token").FirstOrDefault().Value.ToString();
                 return response.Data;
             }
@@ -165,15 +161,19 @@ namespace UniFiSharp
                     remember = false,
                     strict = true
                 });
-                return new JsonLoginResult();
+                return new LoginResult();
             }
         }
 
-        private async Task<JsonMessageEnvelope<T>> ExecuteRequest<T>(IRestRequest request,
-            bool attemptReauthentication = true) where T : new()
+        private async Task<MessageEnvelope<T>> ExecuteRequest<T>(IRestRequest request,
+            bool attemptReauthentication = true)
         {
             if (_useModernApi)
-                request.Resource = "proxy/network/" + request.Resource;
+            {
+                if (request.Resource.StartsWith("api/"))
+                    request.Resource = "proxy/network/" + request.Resource; // default to network
+                else request.Resource = "proxy/" + request.Resource; // switch for others
+            }
 
             request.AddHeader("Referrer", BaseUrl.ToString());
             FollowRedirects = true;
@@ -189,7 +189,7 @@ namespace UniFiSharp
 
                 if (_useModernApi)
                 {
-                    if(_csrf_token != null)
+                    if (_csrf_token != null)
                     {
                         request.AddHeader("X-CSRF-Token", _csrf_token);
                     }
@@ -198,14 +198,14 @@ namespace UniFiSharp
             
             request.JsonSerializer = NewtonsoftJsonSerializer.Default;
 
-            var response = await ExecuteAsync<JsonMessageEnvelope<T>>(request);
+            var response = await ExecuteAsync<MessageEnvelope<T>>(request);
             var envelope = response.Data;
 
             if (envelope == null && !response.IsSuccessful)
                 throw response.ErrorException;
 
             if (!envelope.IsSuccessfulResponse &&
-                envelope.Metadata.Message == "api.err.LoginRequired" &&
+                envelope.Metadata.Message == "api.err.LoginRequired" && // will fail for access devices
                 attemptReauthentication)
             {
                 await Authenticate();

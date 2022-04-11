@@ -8,16 +8,16 @@ namespace UniFiSharp.Orchestration.Collections
     /// <summary>
     /// Represents a collection of user groups for this UniFi controller
     /// </summary>
-    public class UserGroupCollection : RemotedDataCollection<UserGroup>, IMutableRemotedDataCollection<UserGroup>
+    public class UserGroupCollection : RemotedDataCollection<UserGroupModel>, IMutableRemotedDataCollection<UserGroupModel>
     {
-        internal UserGroupCollection(UniFiApi api) : base(api) { }
+        internal UserGroupCollection(UniFiNetworkApi api) : base(api) { }
 
         /// <summary>
         /// Create a new user group
         /// </summary>
         /// <param name="item">New user group to create on UniFi controller</param>
         /// <returns></returns>
-        public async Task Add(UserGroup item)
+        public async Task Add(UserGroupModel item)
         {
             await API.SiteUserGroupsCreate(item.Name);
             await Refresh();
@@ -42,7 +42,7 @@ namespace UniFiSharp.Orchestration.Collections
         /// </summary>
         /// <param name="id">User Group ID</param>
         /// <returns>User group or <c>NULL</c></returns>
-        public UserGroup GetById(string id)
+        public UserGroupModel GetById(string id)
         {
             return CachedCollection.FirstOrDefault(g => g.UserGroupId.Equals(id));
         }
@@ -54,7 +54,7 @@ namespace UniFiSharp.Orchestration.Collections
         public override async Task Refresh()
         {
             CachedCollection = (await API.SiteUserGroupsList())
-                .Select(g => UserGroup.CreateFromJson(g)).ToList();
+                .Select(g => UserGroupModel.CreateFromJson(g)).ToList();
         }
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace UniFiSharp.Orchestration.Collections
         /// </summary>
         /// <param name="item">User group to remove</param>
         /// <returns><c>TRUE</c> if there was an item to remove, otherwise <c>FALSE</c></returns>
-        public async Task<bool> Remove(UserGroup item)
+        public async Task<bool> Remove(UserGroupModel item)
         {
             if (!CachedCollection.Contains(item))
                 return false;

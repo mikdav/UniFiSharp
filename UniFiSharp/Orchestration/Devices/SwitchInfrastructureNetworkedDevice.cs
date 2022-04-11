@@ -21,7 +21,7 @@ namespace UniFiSharp.Orchestration.Devices
             .Union(Clients.Select(c =>
                 Tuple.Create((INetworkedDevice)c, ((WiredClientNetworkedDevice)c).SwitchPort))).ToList();
 
-        public SwitchInfrastructureNetworkedDevice(UniFiApi api, JsonNetworkDevice json) : base(api, json)
+        public SwitchInfrastructureNetworkedDevice(UniFiNetworkApi api, NetworkDevice json) : base(api, json)
         {
         }
     }

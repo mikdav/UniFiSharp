@@ -22,7 +22,7 @@ namespace UniFiSharp
         /// <typeparam name="T">Type of JSON response object</typeparam>
         /// <param name="url">URL to operate on</param>
         /// <returns>JSON response object of the given type</returns>
-        Task<T> UniFiGet<T>(string url) where T : new();
+        Task<T> UniFiGet<T>(string url);
 
         /// <summary>
         /// Execute an HTTP GET operation on a given URL and return a collection of results
@@ -30,7 +30,7 @@ namespace UniFiSharp
         /// <typeparam name="T">Type of JSON response objects</typeparam>
         /// <param name="url">URL to operate on</param>
         /// <returns>List of JSON response objects of the given type</returns>
-        Task<IList<T>> UniFiGetMany<T>(string url) where T : new();
+        Task<IList<T>> UniFiGetMany<T>(string url);
 
         /// <summary>
         /// Execute an HTTP POST operation on a given URL
@@ -47,7 +47,7 @@ namespace UniFiSharp
         /// <param name="url">URL to operate on</param>
         /// <param name="jsonBody">JSON object to POST</param>
         /// <returns>JSON response object of the given type</returns>
-        Task<T> UniFiPost<T>(string url, object jsonBody) where T : new();
+        Task<T> UniFiPost<T>(string url, object jsonBody);
 
         /// <summary>
         /// Execute an HTTP POST operation on a given URL and return a collection of results
@@ -56,7 +56,7 @@ namespace UniFiSharp
         /// <param name="url">URL to operate on</param>
         /// <param name="jsonBody">JSON object to POST</param>
         /// <returns>List of JSON response objects of the given type</returns>
-        Task<IList<T>> UniFiPostMany<T>(string url, object jsonBody) where T : new();
+        Task<IList<T>> UniFiPostMany<T>(string url, object jsonBody);
 
         /// <summary>
         /// Execute an HTTP PUT operation on a given URL
@@ -73,7 +73,7 @@ namespace UniFiSharp
         /// <param name="url">URL to operate on</param>
         /// <param name="jsonBody">JSON object to PUT</param>
         /// <returns>JSON response object of the given type</returns>
-        Task<T> UniFiPut<T>(string url, object jsonBody) where T : new();
+        Task<T> UniFiPut<T>(string url, object jsonBody);
 
         /// <summary>
         /// Execute an HTTP PUT operation on a given URL and return a collection of results
@@ -82,7 +82,7 @@ namespace UniFiSharp
         /// <param name="url">URL to operate on</param>
         /// <param name="jsonBody">JSON object to PUT</param>
         /// <returns>List of JSON response objects of the given type</returns>
-        Task<IList<T>> UniFiPutMany<T>(string url, object jsonBody) where T : new();
+        Task<IList<T>> UniFiPutMany<T>(string url, object jsonBody);
 
         /// <summary>
         /// Execute an HTTP DELETE operation on a given URL
@@ -97,6 +97,6 @@ namespace UniFiSharp
         /// Authenticate to the UniFi controller
         /// </summary>
         /// <returns></returns>
-        Task<Json.JsonLoginResult> Authenticate();
+        Task<Json.LoginResult> Authenticate();
     }
 }

@@ -47,7 +47,7 @@ namespace UniFiSharp.Orchestration.Collections
         /// <summary>
         /// API object which holds the data connection for this collection
         /// </summary>
-        protected UniFiApi API { get; private set; }
+        protected UniFiNetworkApi API { get; private set; }
 
         /// <summary>
         /// Backing collection for this remoted collection
@@ -64,7 +64,7 @@ namespace UniFiSharp.Orchestration.Collections
         /// Create a data collection that uses a UniFiApi object to retrieve its underlying objects
         /// </summary>
         /// <param name="api">API object for this collection's data connection</param>
-        protected RemotedDataCollection(UniFiApi api)
+        protected RemotedDataCollection(UniFiNetworkApi api)
         {
             API = api;
             CachedCollection = new List<T>();
