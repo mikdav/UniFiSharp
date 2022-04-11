@@ -15,7 +15,7 @@ namespace UniFiSharp.Json
         { 
             get 
             { 
-                return this.Message.Equals("success", StringComparison.OrdinalIgnoreCase)
+                return this.Message?.Equals("success", StringComparison.OrdinalIgnoreCase) ?? false
                     || (Metadata != null && Metadata.ResultCode.Equals("ok", StringComparison.OrdinalIgnoreCase));
             } 
         }
