@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using UniFiSharp.Json;
 
-namespace UniFiSharp
+namespace UniFiSharp.Access
 {
     public class UniFiAccessApi
     {

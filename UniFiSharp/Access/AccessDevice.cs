@@ -1,52 +1,53 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace UniFiSharp.Json
+namespace UniFiSharp.Access
 {
+    [JsonObject]
     public class AccessDevice
     {
-        [JsonProperty("_id")]
-        public string _id { get; set; }
+        public string Unique_Id { get; set; }
 
-        [JsonProperty("default")]
-        public bool defaultSettings { get; set; }
+        public string Name { get; set; }
 
-        [JsonProperty("device_id")]
-        public string device_id { get; set; }
+        public string Device_Type { get; set; }
 
-        [JsonProperty("ip")]
-        public string ip { get; set; }
+        public string Connected_Uah_Id { get; set; }
 
-        [JsonProperty("known_cfgversion")]
-        public string known_cfgversion { get; set; }
+        public string Location_Id { get; set; }
 
-        [JsonProperty("mac")]
-        public string mac { get; set; }
+        public string Firmware { get; set; }
 
-        [JsonProperty("model")]
-        public string model { get; set; }
+        public string Version { get; set; }
 
-        [JsonProperty("name")]
-        public string name { get; set; }
+        public string Ip { get; set; }
 
-        [JsonProperty("serial")]
-        public string serial { get; set; }
+        public string Mac { get; set; }
 
-        [JsonProperty("site_id")]
-        public string site_id { get; set; }
+        public long Start_Time { get; set; }
 
-        [JsonProperty("state")]
-        public string state { get; set; }
+        public bool Security_Check { get; set; }
 
-        [JsonProperty("sys_stats")]
-        public string sys_stats { get; set; }
+        public string Resource_Name { get; set; }
 
-        [JsonProperty("type")]
-        public string type { get; set; }
+        public string Revision { get; set; }
 
-        [JsonProperty("version")]
-        public string version { get; set; }
+        public long Revision_Update_Time { get; set; }
+
+        public long Version_Update_Time { get; set; }
+
+        public long Firmware_Update_Time { get; set; }
+
+        public long Adopt_Time { get; set; }
+
+        public bool Is_Connected { get; set; }
+
+        public bool Is_Online { get; set; }
+
+        public bool Is_Revision_Up_To_Date { get; set; }
+
+        public bool Is_Adopted { get; set; }
+
+        public bool Is_Managed { get; set; }
+
     }
 }

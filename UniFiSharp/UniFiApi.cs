@@ -3,6 +3,7 @@ using System.Text;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UniFiSharp.Json;
+using UniFiSharp.Access;
 
 namespace UniFiSharp
 {

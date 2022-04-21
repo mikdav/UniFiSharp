@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Reflection;
 using System.Threading.Tasks;
 using GcmSharp.Serialization;
 using RestSharp;
@@ -30,7 +28,7 @@ namespace UniFiSharp
             _password = password;
             _useModernApi = useModernApi;
 
-            CookieContainer = new System.Net.CookieContainer();
+            CookieContainer = new CookieContainer();
 
             AddHandler("application/json", () => NewtonsoftJsonSerializer.Default);
             AddHandler("text/json", () => NewtonsoftJsonSerializer.Default);
