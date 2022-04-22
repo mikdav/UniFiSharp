@@ -40,7 +40,7 @@ namespace UniFiSharp.Access.Models
 
         public long Adopt_Time { get; set; }
 
-        public Location Location { get; set; }
+        public Door Location { get; set; }
 
         public IEnumerable<DeviceConfig> Configs { get; set; }
 
