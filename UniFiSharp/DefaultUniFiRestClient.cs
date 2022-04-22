@@ -203,7 +203,7 @@ namespace UniFiSharp
                 throw response.ErrorException;
 
             if (!envelope.IsSuccessfulResponse &&
-                envelope.Metadata.Message == "api.err.LoginRequired" && // will fail for access devices
+                envelope.Metadata?.Message == "api.err.LoginRequired" && // will fail for access devices
                 attemptReauthentication)
             {
                 await Authenticate();

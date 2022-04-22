@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using UniFiSharp.Access.Models;
 
 namespace UniFiSharp.Access
 {
@@ -23,17 +24,34 @@ namespace UniFiSharp.Access
         }
 
         /// <summary>
+        ///  Retrieve a single AccessDevice by MAC Address
+        /// </summary>
+        /// <param name="macAddress">Device MAC Address</param>
+        /// <returns>The task result contains a single retrieved AccessDevice</returns>
+        public async Task<AccessDevice> GetDevice(string macAddress)
+        {
+            return await RestClient.UniFiGet<AccessDevice>($"access/api/v2/device/{macAddress.ToLowerInvariant().Replace(":", string.Empty)}");
+        }
+
+        public async Task<IEnumerable<Location>> GetLocations()
+        {
+            return await RestClient.UniFiGetMany<Building>("access/ulp-go/api/v2/locations/buildings?with_children=true");
+        }
+
+        /// <summary>
         /// Unlock a device
         /// </summary>
         /// <param name="macAddress">Device MAC Address</param>
-        /// <returns></returns>
-        public async Task UnlockDevice(string macAddress)
+        /// <returns>The task result contains a value indicating if the Unlock was successful</returns>
+        public async Task<bool> UnlockDevice(string macAddress)
         {
             string result = await RestClient.UniFiPut<string>($"access/api/v2/device/{macAddress.ToLowerInvariant().Replace(":", string.Empty)}/relay_unlock", null);
             if (!result.Equals("success"))
             {
-                throw new InvalidOperationException($"Failed to unlock {macAddress}");
+                return false;
             }
+
+            return true;
         }
     }
 }
