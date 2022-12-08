@@ -42,9 +42,9 @@ namespace UniFiSharp
             }
         }
 
-        public async Task UniFiGet(string url)
+        public async Task<MessageEnvelope> UniFiGet(string url)
         {
-            await UniFiRequest(Method.GET, url);
+            return await UniFiRequest(Method.GET, url);
         }
 
         public async Task<T> UniFiGet<T>(string url)
@@ -97,12 +97,12 @@ namespace UniFiSharp
             await UnifiMultipartFormRequest(url, name, fileName, contentType, data);
         }
 
-        private async Task UniFiRequest(Method method, string url, object jsonBody = null)
+        private async Task<MessageEnvelope> UniFiRequest(Method method, string url, object jsonBody = null)
         {
             var request = new RestRequest(url, method, DataFormat.Json);
             if ((method == Method.POST || method == Method.PUT) && jsonBody != null)
                 request.AddJsonBody(jsonBody);
-            await ExecuteRequest<object>(request);
+            return await ExecuteRequest<object>(request);
         }
 
         private async Task<T> UniFiRequest<T>(Method method, string url, object jsonBody = null)

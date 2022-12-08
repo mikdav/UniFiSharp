@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using UniFiSharp.Access.Models;
 
 namespace UniFiSharp.Access
 {
-    public class UniFiAccessApi
+    public partial class UniFiAccessApi
     {
         protected IUniFiRestClient RestClient;
         protected string Site;

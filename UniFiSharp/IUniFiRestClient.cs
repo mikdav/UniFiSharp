@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Globalization;
 using System.Threading.Tasks;
+using UniFiSharp.Json;
 
 namespace UniFiSharp
 {
@@ -14,7 +14,7 @@ namespace UniFiSharp
         /// </summary>
         /// <param name="url">URL to operate on</param>
         /// <returns></returns>
-        Task UniFiGet(string url);
+        Task<MessageEnvelope> UniFiGet(string url);
         
         /// <summary>
         /// Execute an HTTP GET operation on a given URL and return one result
