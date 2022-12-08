@@ -12,8 +12,8 @@ namespace UniFiSharp.Access
         /// Puts a scanner into reading mode and waits for a card to be read.
         /// Once read, the scanner returns the encryption token of the card that was read.
         /// </summary>
-        /// <param name="macAddress"></param>
-        /// <returns></returns>
+        /// <param name="macAddress">The mac address of the scanner to use when enrolling the card.</param>
+        /// <returns>The encrypt token of the card.</returns>
         public async Task<string> EnrollAccessCard(string macAddress)
         {
             var result = await this.RestClient.UniFiPost<JObject>(
