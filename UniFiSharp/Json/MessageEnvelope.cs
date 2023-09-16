@@ -11,6 +11,15 @@ namespace UniFiSharp.Json
         [JsonProperty(PropertyName = "msg")]
         public string Message { get; set; }
 
+        [JsonProperty(PropertyName = "code")]
+        public int Code { get; set; }
+
+        [JsonProperty(PropertyName = "codeS")]
+        public string CodeString { get; set; }
+
+        [JsonProperty(PropertyName = "error")]
+        public string ErrorMessage { get; set; }
+
         public bool IsSuccessfulResponse 
         { 
             get 
