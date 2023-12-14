@@ -147,7 +147,7 @@ namespace UniFiSharp
                 request.JsonSerializer = NewtonsoftJsonSerializer.Default;
 
                 var response = await ExecuteAsync<LoginResult>(request);
-                _csrf_token = response.Headers.Where(x => x.Name == "X-CSRF-Token").FirstOrDefault().Value.ToString();
+                _csrf_token = response.Headers.Where(x => "X-CSRF-Token".Equals(x.Name, StringComparison.OrdinalIgnoreCase)).FirstOrDefault().Value.ToString();
                 return response.Data;
             }
             else
