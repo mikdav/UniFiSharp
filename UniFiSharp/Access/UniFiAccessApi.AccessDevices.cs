@@ -7,7 +7,6 @@ namespace UniFiSharp.Access
     public partial class UniFiAccessApi
     {
         protected IUniFiRestClient RestClient;
-        protected string Site;
 
         public UniFiAccessApi(IUniFiRestClient rc) {
             this.RestClient = rc;

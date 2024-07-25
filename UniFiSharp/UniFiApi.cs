@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UniFiSharp.Json;
 using UniFiSharp.Access;
+using UniFiSharp.Admin;
 
 namespace UniFiSharp
 {
@@ -14,6 +15,7 @@ namespace UniFiSharp
     {
         private Lazy<UniFiAccessApi> accessApi;
         private Lazy<UniFiNetworkApi> networkApi;
+        private Lazy<UniFiAdminApi> adminApi; 
 
         protected static IUniFiRestClient RestClient { get; set; }
         
@@ -24,6 +26,7 @@ namespace UniFiSharp
 
         public UniFiAccessApi Access => accessApi.Value;
         public UniFiNetworkApi Network => networkApi.Value;
+        public UniFiAdminApi Admin => adminApi.Value;
 
 
         /// <summary>
@@ -41,6 +44,7 @@ namespace UniFiSharp
             RestClient = new DefaultUniFiRestClient(baseUrl, username, password, ignoreSslValidation, useModernApi);
             this.accessApi = new Lazy<UniFiAccessApi>(() => new UniFiAccessApi(RestClient));
             this.networkApi = new Lazy<UniFiNetworkApi>(() => new UniFiNetworkApi(RestClient, defaultSite));
+            this.adminApi = new Lazy<UniFiAdminApi>(() => new UniFiAdminApi(RestClient));
         }
 
         /// <summary>
