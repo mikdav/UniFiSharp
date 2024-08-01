@@ -1,13 +1,9 @@
 ﻿using Newtonsoft.Json;
-using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Xml;
-using System.Xml.Linq;
 using UniFiSharp.Admin.Models;
-using UniFiSharp.Json;
 
 namespace UniFiSharp.Admin
 {
@@ -33,6 +29,7 @@ namespace UniFiSharp.Admin
         {
             var isExistingUser = await GetUser(email);
 
+            // Reactivates the account of the previously created user.
             if(isExistingUser != null && isExistingUser.Status != "ACTIVE")
             {
                 await ActivateUser(email);
@@ -40,6 +37,7 @@ namespace UniFiSharp.Admin
                 return null;
             }
             
+            // Creates a new user, and adds the user to the specified groups.
             UniFiSharp.Admin.Models.User newUser = new UniFiSharp.Admin.Models.User()
             {
                 First_Name = fisrtName,
@@ -116,7 +114,7 @@ namespace UniFiSharp.Admin
         /// <summary>
         /// Deactivates the user account.
         /// </summary>
-        /// <param name="email">The email of the user acccount that needs to be deactivated.</param>
+        /// <param name="email">The email of the user acccount to be deactivated.</param>
         /// <returns></returns>
         public async Task<UniFiSharp.Admin.Models.User> DeactivateUser(string email)
         {
@@ -144,7 +142,7 @@ namespace UniFiSharp.Admin
         /// <summary>
         /// Activates the user account.
         /// </summary>
-        /// <param name="email">The email of the user acccount that needs to be activated.</param>
+        /// <param name="email">The email of the user acccount to be activated.</param>
         /// <returns></returns>
         public async Task<UniFiSharp.Admin.Models.User> ActivateUser(string email)
         {
@@ -170,7 +168,7 @@ namespace UniFiSharp.Admin
         }
 
         /// <summary>
-        /// Deletes the speciafied user. User account has to be deactivated
+        /// Deletes the specified user account.
         /// </summary>
         /// <param name="email">The email of the user account to bedeleted.</param>
         /// <returns></returns>
