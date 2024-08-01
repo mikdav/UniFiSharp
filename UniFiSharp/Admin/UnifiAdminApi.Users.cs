@@ -1,10 +1,13 @@
 ﻿using Newtonsoft.Json;
+using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
+using System.Xml.Linq;
 using UniFiSharp.Admin.Models;
+using UniFiSharp.Json;
 
 namespace UniFiSharp.Admin
 {
@@ -18,12 +21,79 @@ namespace UniFiSharp.Admin
         }
 
         /// <summary>
+        /// Creates a new local user in the UDM.
+        /// </summary>
+        /// <param name="fisrtName">User's name.</param>
+        /// <param name="lastName">User's lastname.</param>
+        /// <param name="email">Company email of the new user.</param>
+        /// <param name="employeeNumber">Employee Id of the new user.</param>
+        /// <param name="groups">Name or names of the groups the user needs to be part of.</param>
+        /// <returns></returns>
+        public async Task<UniFiSharp.Admin.Models.User> CreateUser(string fisrtName, string lastName, string email, string employeeNumber, List<string> groups)
+        {
+            var isExistingUser = await GetUser(email);
+
+            if(isExistingUser != null && isExistingUser.Status != "ACTIVE")
+            {
+                await ActivateUser(email);
+
+                return null;
+            }
+            
+            UniFiSharp.Admin.Models.User newUser = new UniFiSharp.Admin.Models.User()
+            {
+                First_Name = fisrtName,
+                Last_Name = lastName,
+                User_Email = email,
+                Employee_Number = employeeNumber,
+                Force_Add_Nfc = true,
+                Nfc_Token = string.Empty,
+                Pin_Code = string.Empty,
+                Group_Ids = new List<string>()
+            };
+
+            var udmGroups = await GetAllGrpoups();
+
+            foreach (var group in groups)
+            {
+                var groupToAdd = udmGroups.SingleOrDefault(u => u.Name == group);
+
+                if (groupToAdd == null)
+                {
+                    throw new Exception($"The group {group} is not part of the UDM group list");
+                }
+
+                newUser.Group_Ids.Add(groupToAdd.Unique_Id);
+            }
+
+            await RestClient.UniFiPost($"/users/api/v2/user", newUser);
+
+            return null;
+        }
+
+        /// <summary>
+        /// Returns all the existing groups in a UDM.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IEnumerable<Group>> GetAllGrpoups()
+        {
+            var groups = await RestClient.UniFiGetMany<Group>($"/users/api/v2/user_groups");
+
+            if (!groups.Any())
+            {
+                throw new Exception("No groups were found");
+            }
+            
+            return groups;
+        }
+
+        /// <summary>
         /// Returns a collection of all the users created in a UDM.
         /// </summary>
         /// <returns></returns>
-        public async Task<IEnumerable<User>> GetAllUsers()
+        public async Task<IEnumerable<UniFiSharp.Admin.Models.User>> GetAllUsers()
         {
-            return await RestClient.UniFiGetMany<User>($"access/ulp-go/api/v2/users/search");
+            return await RestClient.UniFiGetMany<UniFiSharp.Admin.Models.User>($"access/ulp-go/api/v2/users/search");
         }
 
         /// <summary>
@@ -31,9 +101,15 @@ namespace UniFiSharp.Admin
         /// </summary>
         /// <param name="email">The email of the user.</param>
         /// <returns></returns>
-        public async Task<User> GetUser(string email)
+        public async Task<UniFiSharp.Admin.Models.User> GetUser(string email)
         {
-            var users = await RestClient.UniFiGetMany<User>($"/access/ulp-go/api/v2/users/search?condition={email}");
+            var users = await RestClient.UniFiGetMany<UniFiSharp.Admin.Models.User>($"access/ulp-go/api/v2/users/search?condition={email}");
+
+            if(users.Count == 0)
+            {
+                return null;
+            }
+
             return users.Single();
         }
 
@@ -42,31 +118,27 @@ namespace UniFiSharp.Admin
         /// </summary>
         /// <param name="email">The email of the user acccount that needs to be deactivated.</param>
         /// <returns></returns>
-        public async Task<User> DeactivateUser(string email)
+        public async Task<UniFiSharp.Admin.Models.User> DeactivateUser(string email)
         {
-            try
+            var user = await GetUser(email);
+
+            if (user == null)
             {
-                var user = await GetUser($"{email}");
+                throw new Exception("User not found");
+            }
 
-                if (user == null)
-                {
-                    throw new Exception("User not found");
-                }
-
-                var uniqueId = user.Unique_Id;
-
-                user.Status = "DEACTIVATED";
-
-                var jsonBody = JsonConvert.SerializeObject(user);
-
-                await RestClient.UniFiPut($"/users/api/v2/user/{uniqueId}/deactivate?isULP=1", jsonBody);
+            if (user.Status == "DEACTIVATED")
+            {
                 return null;
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"An error occurred: {ex.Message}");
-                return null;
-            }
+
+            user.Status = "DEACTIVATED";
+
+            var jsonBody = JsonConvert.SerializeObject(user);
+
+            await RestClient.UniFiPut($"/users/api/v2/user/{user.Unique_Id}/deactivate?isULP=1", jsonBody);
+            
+            return null;
         }
 
         /// <summary>
@@ -74,113 +146,52 @@ namespace UniFiSharp.Admin
         /// </summary>
         /// <param name="email">The email of the user acccount that needs to be activated.</param>
         /// <returns></returns>
-        public async Task<User> ActivateUser(string email)
+        public async Task<UniFiSharp.Admin.Models.User> ActivateUser(string email)
         {
-            try
+            var user = await GetUser(email);
+
+            if (user == null)
             {
-                var user = await GetUser($"{email}");
+                throw new Exception("User not found");
+            }
 
-                if (user == null)
-                {
-                    throw new Exception("User not found");
-                }
-
-                
-                var uniqueId = user.Unique_Id;
-
-                user.Status = "ACTIVE";
-
-                var jsonBody = JsonConvert.SerializeObject(user);
-
-                await RestClient.UniFiPut($"/users/api/v2/user/{uniqueId}/active?isULP=1", jsonBody);
+            if (user.Status == "ACTIVE")
+            {
                 return null;
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"An error occurred: {ex.Message}");
-                return null;
-            }
+
+            user.Status = "ACTIVE";
+
+            var jsonBody = JsonConvert.SerializeObject(user);
+
+            await RestClient.UniFiPut($"/users/api/v2/user/{user.Unique_Id}/active?isULP=1", jsonBody);
+            
+            return null;
         }
 
         /// <summary>
-        /// Return all the access groups in the UDM.
+        /// Deletes the speciafied user. User account has to be deactivated
         /// </summary>
+        /// <param name="email">The email of the user account to bedeleted.</param>
         /// <returns></returns>
-        public async Task<IEnumerable<Group>> GetAllGrpoups()
+        /// <exception cref="Exception"></exception>
+        public async Task<UniFiSharp.Admin.Models.User> DeleteUser(string email)
         {
-            return await RestClient.UniFiGetMany<Group>($"/users/api/v2/user_groups");
+            var user = await GetUser(email);
+
+            if (user == null)
+            {
+                throw new Exception("User not found");
+            }
+
+            if (!(user.Status == "DEACTIVATED"))
+            {
+                await DeactivateUser(email);
+            }
+
+            await RestClient.UniFiDelete($"/users/api/v2/user/{user.Unique_Id}?isULP=1");
+
+            return null;
         }
-
-        /// <summary>
-        /// Returns the specified group or groups
-        /// </summary>
-        /// <param name="names">Names of the groups.</param>
-        /// <param name="uniqueIds">Unique IDs of the groups.</param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentException"></exception>
-        public async Task<List<Group>> GetGroup(List<string> names = null, List<string> uniqueIds = null)
-        {
-            if (names == null && uniqueIds == null)
-            {
-                throw new ArgumentException("Both name and uniqueId cannot be null");
-            }
-
-            try
-            {
-                var groups = await GetAllGrpoups();
-                
-                List<Group> foundGroups = new List<Group>();
-
-                if ()
-                { 
-                
-                }
-                
-                foreach (var name in names)
-                {
-                    if (name != null)
-                    {
-                        foundGroups.Add(groups.SingleOrDefault(g => g.Name == name));
-                    }
-                }
-
-                foreach (var uniqueId in uniqueIds)
-                {
-                    if (uniqueId != null)
-                    {
-                        foundGroups.Add(groups.SingleOrDefault(g => g.Unique_Id == uniqueId));
-                    }
-                }
-
-                if (foundGroups.Count() == 0)
-                {
-                    throw new Exception("Group not found");
-                }
-
-                return foundGroups;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"An error occurred: {ex.Message}");
-                return null;
-            }
-        }
-
-        public async Task<User> AddToGroup(string email, List<Group> groups)
-        { 
-            User user = await GetUser(email);
-
-            var userUniqueId = user.Unique_Id;
-
-            foreach (var group in groups)
-            {
-                user.Groups.Add(group);
-            }
-
-            //var jsonBody = JsonConvert.SerializeObject(user);
-
-            return await RestClient.UniFiPut<User>($"/users/api/v2/user/{userUniqueId}", user);
-        }
-
     }
 }

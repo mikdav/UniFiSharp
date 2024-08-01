@@ -15,37 +15,34 @@ namespace UniFiSharpTester
             {
                 var loginResult = await api.Authenticate();
 
-                // Target user
-                string email = "testerson@nirvc.com";
-                
-                // Test group names
-                string mgmtGroup = "Management";
-                string ITGroup = "IT";
-
+                string firstName = "User";
+                string lastName = "ToDelete";
+                string email = "usertodelete@nirvc.com";
+                string employeeNumber = "1223334444";
                 List<string> groups = new List<string>();
-                groups.Add(mgmtGroup);
-                groups.Add(ITGroup);
+                groups.Add("IT");
+                groups.Add("Not-Parts");
 
-                // Gets all the users.
+                ////////////////////////////////////////////////////////////////////////////////////////
+
+                ////Gets all the users.
                 //var users = await api.Admin.GetAllUsers();
                 //var totalUsers = users.Count();
 
-                // Gets the sopecified user by email.
+                //Creates a new user
+                await api.Admin.CreateUser(firstName, lastName, email, employeeNumber,groups);
+                
+                ////Gets the sopecified user by email.
                 //var user = await api.Admin.GetUser(email);
-
-                // Deactivates the specified user
+                //
+                ////Deactivates the specified user
                 //await api.Admin.DeactivateUser(email);
-
-                // Activates the specified user
+                //
+                ////Activates the specified user
                 //await api.Admin.ActivateUser(email);
-
-                // Gets the specified group.
-                var group =  await api.Admin.GetGroup(groups, null);
-
-                //Adds the specified user to a single or multiple groups.
-                await api.Admin.AddToGroup(email, group);
-
-
+                //
+                ////Deletes the specified user.
+                //await api.Admin.DeleteUser(email);
             }
         }
     }
