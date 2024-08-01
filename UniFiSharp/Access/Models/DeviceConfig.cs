@@ -6,8 +6,11 @@ namespace UniFiSharp.Access.Models
     public class DeviceConfig
     {
         public string Device_Id { get; set; }
+
         public string Key { get; set; }
+
         public string Value { get; set; }
+
         public string Tag { get; set; }
     }
 }

@@ -7,7 +7,6 @@ namespace UniFiSharp.Access
     public partial class UniFiAccessApi
     {
         protected IUniFiRestClient RestClient;
-        protected string Site;
 
         public UniFiAccessApi(IUniFiRestClient rc) {
             this.RestClient = rc;
@@ -32,6 +31,10 @@ namespace UniFiSharp.Access
             return await RestClient.UniFiGet<AccessDevice>($"access/api/v2/device/{macAddress.ToLowerInvariant().Replace(":", string.Empty)}");
         }
 
+        /// <summary>
+        /// Retrieve a single location
+        /// </summary>
+        /// <returns>The task result contain a single retrieved location</returns>
         public async Task<IEnumerable<Location>> GetLocations()
         {
             return await RestClient.UniFiGetMany<Building>("access/ulp-go/api/v2/locations/buildings?with_children=true");
