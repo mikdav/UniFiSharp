@@ -50,7 +50,7 @@ namespace UniFiSharp.Admin
                 Group_Ids = new List<string>()
             };
 
-            var udmGroups = await GetAllGrpoups();
+            var udmGroups = await GetAllGroups();
 
             foreach (var group in groups)
             {
@@ -73,7 +73,7 @@ namespace UniFiSharp.Admin
         /// Returns all the existing groups in a UDM.
         /// </summary>
         /// <returns></returns>
-        public async Task<IEnumerable<Group>> GetAllGrpoups()
+        public async Task<IEnumerable<Group>> GetAllGroups()
         {
             var groups = await RestClient.UniFiGetMany<Group>($"/users/api/v2/user_groups");
 
