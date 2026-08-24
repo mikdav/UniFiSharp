@@ -12,6 +12,8 @@ namespace UniFiSharp.Access.Models
         Contractor,
         Delivery,
         Others,
+        Interview,
+        Cooperation,
     }
 
     [JsonObject]
