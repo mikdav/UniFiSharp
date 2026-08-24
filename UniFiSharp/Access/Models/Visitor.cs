@@ -10,7 +10,10 @@ namespace UniFiSharp.Access.Models
         Guest,
         Business,
         Contractor,
-        Delivery
+        Delivery,
+        Others,
+        Interview,
+        Cooperation,
     }
 
     [JsonObject]
